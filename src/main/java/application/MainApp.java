@@ -26,10 +26,10 @@ public class MainApp {
                 placeOrder();
                 break ;
             case 3:
-                // cancelOrder();
+                cancelOrder();
                 break;
             case 4 :
-                // displayAllOrders();
+                displayAllOrders();
                 break;
             case 5 :
                 System.exit(0 );
@@ -64,6 +64,30 @@ public class MainApp {
         else
             System.out.println("ORDER NOT PLACED !!");
 
+    }
+
+
+    private static  void cancelOrder()
+    {
+        System.out.println("ENTER ORDER ID ");
+        int orderId = sc.nextInt() ;
+        boolean status = service.cancelOrder(orderId);
+        if (status)
+            System.out.println("ORDER CANCELED SUCCESSFULLY !!");
+        else
+            System.out.println("ORDER NOT CANCELED  !!");
+
+    }
+
+
+    private static void displayAllOrders()
+    {
+        for (OrderInfo o1 : service.displayAllOrders())
+        {
+            System.out.println(o1.getOrderId() +"     "+o1.getCustomerName() +"     "+
+                                o1.getTotalAmount() +"       "+o1.getProductName() +"      "+
+                                o1.getProductQty());
+        }
     }
 
 }

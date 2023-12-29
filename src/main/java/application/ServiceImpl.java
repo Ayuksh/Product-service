@@ -63,6 +63,52 @@ public class ServiceImpl implements Service{
 
     @Override
     public boolean cancelOrder(int orderId) {
-        return false;
+        String query = "{call cancleOrder(? , ?)}";
+        boolean status = false ;
+        try {
+            CallableStatement cstmt = conn.prepareCall(query);
+            cstmt.setInt(1 , orderId);
+            cstmt.execute();
+            status = cstmt.getBoolean(2);
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return status;
+    }
+
+    @Override
+    public List<OrderInfo> displayAllOrders() {
+        List<OrderInfo> orderList = new ArrayList<>();
+        String displayQuery = "SELECT \n" +
+                "    o.order_id,\n" +
+                "    o.customer_name,\n" +
+                "    o.product_qty * p.product_price AS Total,\n" +
+                "    p.product_name,\n" +
+                "    o.product_qty\n" +
+                "FROM\n" +
+                "    order_info o\n" +
+                "        INNER JOIN\n" +
+                "    product_info p ON o.product_id = p.product_id;";
+
+        try {
+            Statement stmt = conn.createStatement();
+
+            ResultSet rs = stmt.executeQuery(displayQuery);
+            while (rs.next())
+            {
+                int oId = rs.getInt(1);
+                String cName = rs.getString(2);
+                double totalAmt = rs.getDouble(3);
+                String pName = rs.getString(4);
+                int pQty = rs.getInt(5);
+                OrderInfo o1 = new OrderInfo(oId , cName , totalAmt , pName , pQty);
+                orderList.add(o1);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
+        return orderList;
     }
 }
